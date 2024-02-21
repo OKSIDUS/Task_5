@@ -1,0 +1,139 @@
+﻿@model IEnumerable<Task_5.Models.UserModel>
+
+@{
+    var region = TempData["Region"] as string ?? "";
+    var seed = TempData["Seed"];
+    var error = TempData["error"] ?? 0.0d;
+}
+
+<div class="container mt-5">
+
+
+
+    <form method="post" action="ChangeFakerConfigure" id="myForm">
+        <div class="mb-3">
+            <label for="seedInput" class="form-label">Select Seed:</label>
+            <input type="number" id="seedInput" name="seed" class="form-control" value="@seed">
+
+            <button type="button" class="btn btn-secondary" onclick="generateRandomSeed()">Generate Seed</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        </div>
+
+        <div class="form-group">
+            <label for="regionSelect">Select Region:</label>
+            <select id="regionSelect" name="region" class="form-control" >
+                <option value="en_US" selected=@(region == "en_US")>English (United States)</option>
+                <option value="uk" selected=@(region == "uk")>Ukranian (Ukraine)</option>
+                <option value="ge" selected=@(region == "ge")>Georgian (Georgia)</option>
+            </select>
+        </div>
+
+        
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="errorInput" class="form-label">Error:</label>
+                <input type="number" pattern="[0-9]+([,.][0-9]+)?" id="errorInput" name="error" max="1000" step="0.01" value="@error" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="slider" class="form-label">Slider:</label>
+                <input type="range" id="slider" name="slider" min="0" max="10" step="0.25" value="@error" class="form-range">
+            </div>
+        </div>
+    </form>
+
+</div>
+@if (Model is not null)
+{
+    <table class="table" id="userTable">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                </th>
+            </tr>
+        </thead>
+        <tbody id="trow">
+            @{
+                Html.RenderPartial("_UserListPartial", Model);
+            }
+        </tbody>
+    </table>
+    <div id="LoadMore"></div>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+
+    function generateRandomSeed() {
+         var randomNumber = Math.floor(Math.random() * 1000000);
+         document.getElementById("seedInput").value = randomNumber;
+        $('#myForm').submit();
+     };
+
+    var slider = document.getElementById("slider");
+    var errorInput = document.getElementById("errorInput");
+    var regionSelect = document.getElementById("regionSelect");
+
+    regionSelect.addEventListener("change", function () {
+        $('#myForm').submit();
+    });
+
+    slider.addEventListener("change", function () {
+
+        var roundedValue = parseFloat(slider.value).toFixed(2);
+        errorInput.value = parseFloat(roundedValue);
+
+        $('#myForm').submit();
+    });
+    slider.addEventListener("input", function () {
+        var roundedValue = parseFloat(slider.value).toFixed(2);
+        errorInput.value = parseFloat(roundedValue);
+    });
+
+    errorInput.addEventListener("change", function () {
+        if (parseFloat(errorInput.value) >= parseFloat(slider.min) && parseFloat(errorInput.value) <= parseFloat(slider.max)) {
+            slider.value = errorInput.value
+
+            $('#myForm').submit();
+        }
+    });
+
+
+    var skip = @(Model?.Count() ?? 0);
+    var page = 2;
+    var seed = $('#seedInput').data('seed');
+    var region = '@(TempData["region"])';
+    var error = '@(TempData["error"])';
+
+    $(window).on('scroll touchmove', function () {
+        var docHeight = $(document).height();
+        var winScrolled = $(window).height() + $(window).scrollTop();
+        console.log((docHeight - winScrolled));
+        if ((docHeight - winScrolled) < 1) {
+            $.get("@Url.Action("InfinityScroll", "User")", { "page": page, "region": region, "seed": seed, "error": error },
+                function (data) {
+                    
+                    page = page + 1;
+                    $("#trow").append(data);
+                });
+        }
+        
+        
+    });
+
+    $('#seedInput').change(function () {
+        $('#myForm').submit();
+    });
+</script>

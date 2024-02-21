@@ -1,0 +1,27 @@
+﻿@model IEnumerable<UserModel>
+
+@{
+    var counter = (int)(TempData["counter"] ?? 1);
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @counter
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+        </tr>
+        counter++;
+    }
+    TempData["counter"] = counter;
+}
