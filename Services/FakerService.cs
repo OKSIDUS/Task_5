@@ -15,19 +15,21 @@ namespace Task_5.Services
             var error = new ErrorGenerator(region);
             for (int i = 0; i < count; i++)
             {
-                users.Add(error.MakeError(GenerateFakeUser(),countOfError));
+                users.Add(error.MakeError(GenerateFakeUser(i+1),countOfError));
+                
 
             }
 
             return users;
         }
 
-        public UserModel GenerateFakeUser()
+        public UserModel GenerateFakeUser(int numberOfUser)
         {
             var user = _faker.Generate();
             int lastComma = user.Address.LastIndexOf(',');
             string newAddress = user.Address.Substring(0, lastComma);
             user.Address = newAddress;
+            user.NumberOfUser = numberOfUser;
             
             return user;
         }

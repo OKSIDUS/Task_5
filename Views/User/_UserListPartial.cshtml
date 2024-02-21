@@ -1,12 +1,11 @@
 ﻿@model IEnumerable<UserModel>
 
 @{
-    var counter = (int)(TempData["counter"] ?? 1);
     foreach (var item in Model)
     {
         <tr>
             <td>
-                @counter
+                @Html.DisplayFor(modelItem => item.NumberOfUser)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserId)
@@ -21,7 +20,5 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
         </tr>
-        counter++;
     }
-    TempData["counter"] = counter;
 }

@@ -112,7 +112,7 @@
 
 
     var skip = @(Model?.Count() ?? 0);
-    var page = 2;
+    var page = 3;
     var seed = $('#seedInput').data('seed');
     var region = '@(TempData["region"])';
     var error = '@(TempData["error"])';
@@ -120,7 +120,7 @@
     $(window).on('scroll touchmove', function () {
         var docHeight = $(document).height();
         var winScrolled = $(window).height() + $(window).scrollTop();
-        console.log((docHeight - winScrolled));
+        //console.log((docHeight - winScrolled));
         if ((docHeight - winScrolled) < 1) {
             $.get("@Url.Action("InfinityScroll", "User")", { "page": page, "region": region, "seed": seed, "error": error },
                 function (data) {

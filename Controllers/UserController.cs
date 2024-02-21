@@ -14,7 +14,6 @@ namespace Task_5.Controllers
         }
         public IActionResult Index()
         {
-            TempData["counter"] = 1;
             if (TempData.TryGetValue("Seed", out var seed) && TempData.TryGetValue("Region", out var region) && TempData.TryGetValue("error", out var error))
             {
                 var page = TempData["page"];
